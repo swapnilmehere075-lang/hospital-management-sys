@@ -60,7 +60,7 @@ def register():
 
     cursor.execute(
         """
-        INSERT INTO Patient
+        INSERT INTO patient
         (first_name,last_name,gender,date_of_birth,phone,address,blood_group)
         VALUES (%s,%s,%s,%s,%s,%s,%s)
         """,
@@ -95,7 +95,7 @@ def search():
             cursor.execute(
                 """
                 SELECT *
-                FROM Patient
+                FROM patient
                 WHERE patient_id = %s
                 """,
                 (int(q),)
@@ -104,7 +104,7 @@ def search():
             cursor.execute(
                 """
                 SELECT *
-                FROM Patient
+                FROM patient
                 WHERE first_name LIKE %s
                 OR last_name LIKE %s
                 ORDER BY patient_id DESC
@@ -131,7 +131,7 @@ def view_patient(patient_id):
     cursor.execute(
         """
         SELECT *
-        FROM Patient
+        FROM patient
         WHERE patient_id = %s
         """,
         (patient_id,)
@@ -142,7 +142,7 @@ def view_patient(patient_id):
     if not patient:
         cursor.close()
         db.close()
-        return "Patient not found."
+        return "patient not found."
 
     cursor.execute(
         """
@@ -234,7 +234,7 @@ def appointment():
         reason = request.form.get("reason")
 
         cursor.execute(
-            "SELECT patient_id FROM Patient WHERE patient_id = %s",
+            "SELECT patient_id FROM patient WHERE patient_id = %s",
             (patient_id,)
         )
 
@@ -296,7 +296,7 @@ def appointment():
             patient_id,
             first_name,
             last_name
-        FROM Patient
+        FROM patient
         ORDER BY patient_id DESC
         """
     )
@@ -330,7 +330,7 @@ def appointment():
             a.status,
             a.reason
         FROM Appointment a
-        JOIN Patient p
+        JOIN patient p
         ON a.patient_id = p.patient_id
         JOIN Doctor d
         ON a.doctor_id = d.doctor_id
@@ -369,7 +369,7 @@ def billing():
         bill_date = request.form.get("bill_date")
 
         cursor.execute(
-            "SELECT patient_id FROM Patient WHERE patient_id = %s",
+            "SELECT patient_id FROM patient WHERE patient_id = %s",
             (patient_id,)
         )
 
@@ -422,7 +422,7 @@ def billing():
             patient_id,
             first_name,
             last_name
-        FROM Patient
+        FROM patient
         ORDER BY patient_id DESC
         """
     )
@@ -438,7 +438,7 @@ def billing():
             a.appointment_date,
             a.appointment_time
         FROM Appointment a
-        JOIN Patient p
+        JOIN patient p
         ON a.patient_id = p.patient_id
         ORDER BY a.appointment_id DESC
         """
@@ -458,7 +458,7 @@ def billing():
             b.bill_date,
             b.payment_method
         FROM Billing b
-        JOIN Patient p
+        JOIN patient p
         ON b.patient_id = p.patient_id
         ORDER BY b.bill_id DESC
         """
