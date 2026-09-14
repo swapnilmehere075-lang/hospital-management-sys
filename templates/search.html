@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Patient Search</title>
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f3f7fb;color:#263238;padding:30px}
+.box{max-width:1000px;margin:auto;background:white;padding:30px;border-radius:14px;box-shadow:0 4px 18px #dce3e8}
+h1{color:#123b5d;margin-bottom:8px}
+.subtitle{color:#718096;margin-bottom:25px}
+.search{display:flex;gap:10px}
+input{flex:1;padding:13px;border:1px solid #ccd6dd;border-radius:8px;font-size:15px}
+button{padding:13px 22px;background:#1769aa;color:white;border:0;border-radius:8px;cursor:pointer;font-size:15px}
+button:hover{background:#0d527f}
+table{width:100%;margin-top:25px;border-collapse:collapse}
+th{background:#edf5fa;color:#123b5d;padding:13px;text-align:left}
+td{padding:13px;border-bottom:1px solid #ddd}
+.view{display:inline-block;background:#1769aa;color:white;text-decoration:none;padding:8px 12px;border-radius:6px;font-size:13px}
+.view:hover{background:#0d527f}
+.empty{text-align:center;padding:30px;color:#718096}
+.back{display:inline-block;margin-top:25px;color:#1769aa;text-decoration:none;font-weight:bold}
+@media(max-width:700px){.search{flex-direction:column}table{font-size:13px}}
+</style>
+</head>
+<body>
+<div class="box">
+<h1>🔍 Patient Search</h1>
+<p class="subtitle">Search patients by ID or name</p>
+
+<form action="/search" method="GET">
+<div class="search">
+<input type="text" name="q" placeholder="Enter Patient ID or Patient Name" value="{{ search }}" required>
+<button type="submit">🔎 Search</button>
+</div>
+</form>
+
+{% if search %}
+{% if patients %}
+<table>
+<tr>
+<th>ID</th>
+<th>Patient Name</th>
+<th>Gender</th>
+<th>Phone</th>
+<th>Blood Group</th>
+<th>Action</th>
+</tr>
+{% for patient in patients %}
+<tr>
+<td>{{ patient.patient_id }}</td>
+<td>{{ patient.first_name }} {{ patient.last_name }}</td>
+<td>{{ patient.gender }}</td>
+<td>{{ patient.phone }}</td>
+<td>{{ patient.blood_group }}</td>
+<td><a class="view" href="/patient/{{ patient.patient_id }}">View Profile</a></td>
+</tr>
+{% endfor %}
+</table>
+{% else %}
+<div class="empty">
+<h3>❌ No patient found</h3>
+<p>Try another patient ID or name.</p>
+</div>
+{% endif %}
+{% endif %}
+
+<a class="back" href="/">← Back to Dashboard</a>
+</div>
+</body>
+</html>

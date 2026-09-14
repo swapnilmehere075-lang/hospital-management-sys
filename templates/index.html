@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Hospital Management System</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:#f3f7fb;color:#263238}
+.sidebar{position:fixed;left:0;top:0;width:230px;height:100vh;background:#123b5d;color:white;padding:25px 15px}
+.logo{text-align:center;font-size:24px;font-weight:bold;margin-bottom:35px}
+.logo span{display:block;font-size:12px;font-weight:normal;margin-top:5px;opacity:.8}
+.nav a{display:block;color:white;text-decoration:none;padding:13px 15px;margin:7px 0;border-radius:8px;transition:.2s}
+.nav a:hover{background:#1769aa;transform:translateX(3px)}
+.main{margin-left:230px;padding:30px}
+.header{margin-bottom:25px}
+.header h1{color:#123b5d;font-size:28px}
+.header p{color:#718096;margin-top:5px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:25px}
+.card{background:white;padding:22px;border-radius:12px;box-shadow:0 3px 12px #dce3e8;transition:.2s}
+.card:hover{transform:translateY(-4px)}
+.card-icon{font-size:30px;margin-bottom:12px}
+.card h3{font-size:14px;color:#718096;margin-bottom:8px}
+.number{font-size:28px;font-weight:bold;color:#123b5d}
+.box{background:white;padding:25px;border-radius:12px;box-shadow:0 3px 12px #dce3e8;margin-bottom:25px}
+.box h2{color:#123b5d;margin-bottom:20px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:17px}
+label{display:block;font-weight:bold;font-size:14px;margin-bottom:7px;color:#37474f}
+input,select{width:100%;padding:12px;border:1px solid #ccd6dd;border-radius:7px;font-size:14px}
+button,.button{display:inline-block;padding:12px 20px;background:#1769aa;color:white;border:0;border-radius:7px;text-decoration:none;cursor:pointer;font-size:14px;margin-top:18px}
+button:hover,.button:hover{background:#0d527f}
+.quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.action{display:block;text-align:center;padding:20px 12px;background:#f7fafc;border:1px solid #e2e8f0;border-radius:10px;text-decoration:none;color:#123b5d;font-weight:bold;transition:.2s}
+.action:hover{background:#edf5fa;transform:translateY(-3px)}
+.action-icon{font-size:28px;display:block;margin-bottom:8px}
+.footer{text-align:center;color:#8a9aa8;font-size:13px;padding:10px}
+@media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.sidebar{position:relative;width:100%;height:auto}.main{margin-left:0;padding:20px}.cards,.form-grid,.quick-actions{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+<div class="logo">🏥 HMS<span>Hospital Management System</span></div>
+<div class="nav">
+<a href="/">🏠 Dashboard</a>
+<a href="#patients">👤 Patients</a>
+<a href="/search">🔍 Search Patient</a>
+<a href="/appointment">📅 Appointments</a>
+<a href="/billing">💳 Billing</a>
+<a href="/doctors">👨‍⚕️ Doctors</a>
+<a href="/departments">🏢 Departments</a>
+<a href="#reports">📊 Reports</a>
+</div>
+</div>
+
+<div class="main">
+
+<div class="header">
+<h1>Hospital Management System</h1>
+<p>Welcome to the hospital administration dashboard</p>
+</div>
+
+<div class="cards">
+<div class="card">
+<div class="card-icon">👤</div>
+<h3>Total Patients</h3>
+<div class="number">{{ total_patients }}</div>
+</div>
+
+<div class="card">
+<div class="card-icon">📅</div>
+<h3>Total Appointments</h3>
+<div class="number">{{ total_appointments }}</div>
+</div>
+
+<div class="card">
+<div class="card-icon">💳</div>
+<h3>Total Bills</h3>
+<div class="number">{{ total_bills }}</div>
+</div>
+
+<div class="card">
+<div class="card-icon">🏢</div>
+<h3>Departments</h3>
+<div class="number">{{ total_departments }}</div>
+</div>
+</div>
+
+<div class="box">
+<h2>⚡ Quick Actions</h2>
+<div class="quick-actions">
+
+<a class="action" href="#patients">
+<span class="action-icon">👤</span>
+Register Patient
+</a>
+
+<a class="action" href="/search">
+<span class="action-icon">🔍</span>
+Search Patient
+</a>
+
+<a class="action" href="/appointment">
+<span class="action-icon">📅</span>
+Book Appointment
+</a>
+
+<a class="action" href="/billing">
+<span class="action-icon">💳</span>
+Manage Billing
+</a>
+
+<a class="action" href="/doctors">
+<span class="action-icon">👨‍⚕️</span>
+View Doctors
+</a>
+
+<a class="action" href="/departments">
+<span class="action-icon">🏢</span>
+View Departments
+</a>
+
+</div>
+</div>
+
+<div class="box" id="patients">
+<h2>👤 Register New Patient</h2>
+
+<form method="POST" action="/register">
+
+<div class="form-grid">
+
+<div>
+<label>First Name</label>
+<input type="text" name="first_name" placeholder="Enter first name" required>
+</div>
+
+<div>
+<label>Last Name</label>
+<input type="text" name="last_name" placeholder="Enter last name" required>
+</div>
+
+<div>
+<label>Gender</label>
+<select name="gender" required>
+<option value="">Select Gender</option>
+<option value="Male">Male</option>
+<option value="Female">Female</option>
+<option value="Other">Other</option>
+</select>
+</div>
+
+<div>
+<label>Date of Birth</label>
+<input type="date" name="date_of_birth">
+</div>
+
+<div>
+<label>Phone</label>
+<input type="text" name="phone" placeholder="Enter phone number" required>
+</div>
+
+<div>
+<label>Blood Group</label>
+<select name="blood_group">
+<option value="">Select Blood Group</option>
+<option value="A+">A+</option>
+<option value="A-">A-</option>
+<option value="B+">B+</option>
+<option value="B-">B-</option>
+<option value="AB+">AB+</option>
+<option value="AB-">AB-</option>
+<option value="O+">O+</option>
+<option value="O-">O-</option>
+</select>
+</div>
+
+<div style="grid-column:1/-1">
+<label>Address</label>
+<input type="text" name="address" placeholder="Enter address" required>
+</div>
+
+</div>
+
+<button type="submit">➕ Register Patient</button>
+</form>
+</div>
+
+<div class="box" id="reports">
+<h2>📊 System Overview</h2>
+<div class="form-grid">
+
+<div>
+<label>Patient Records</label>
+<p style="color:#1769aa;font-size:22px;font-weight:bold;margin-top:8px">{{ total_patients }} Patients</p>
+</div>
+
+<div>
+<label>Appointment Records</label>
+<p style="color:#1769aa;font-size:22px;font-weight:bold;margin-top:8px">{{ total_appointments }} Appointments</p>
+</div>
+
+<div>
+<label>Billing Records</label>
+<p style="color:#1769aa;font-size:22px;font-weight:bold;margin-top:8px">{{ total_bills }} Bills</p>
+</div>
+
+<div>
+<label>Hospital Departments</label>
+<p style="color:#1769aa;font-size:22px;font-weight:bold;margin-top:8px">{{ total_departments }} Departments</p>
+</div>
+
+</div>
+</div>
+
+<div class="footer">
+Hospital Management System • DBMS Project
+</div>
+
+</div>
+</body>
+</html>

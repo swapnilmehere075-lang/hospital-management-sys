@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Appointments - Hospital Management System</title>
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f3f7fb;color:#263238;padding:30px}
+.container{max-width:1150px;margin:auto}
+.box{background:white;padding:25px;border-radius:12px;box-shadow:0 3px 15px #dce3e8;margin-bottom:25px}
+h1,h2{color:#123b5d}
+.subtitle{color:#718096;margin:7px 0 25px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+label{display:block;font-weight:bold;margin-bottom:7px;color:#37474f}
+input,select{width:100%;padding:12px;border:1px solid #ccd6dd;border-radius:7px;font-size:14px}
+input:focus,select:focus{outline:none;border-color:#1769aa}
+button{margin-top:20px;padding:13px 22px;background:#1769aa;color:white;border:0;border-radius:7px;cursor:pointer;font-size:15px}
+button:hover{background:#0d527f}
+.message{padding:13px;background:#e8f7ef;color:#16734a;border-radius:7px;margin-bottom:20px}
+.error{padding:13px;background:#fdecec;color:#b42318;border-radius:7px;margin-bottom:20px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th{background:#edf5fa;color:#123b5d;padding:12px;text-align:left;white-space:nowrap}
+td{padding:12px;border-bottom:1px solid #ddd;white-space:nowrap}
+.status{font-weight:bold;color:#1769aa}
+.back{display:inline-block;margin-top:5px;color:#1769aa;text-decoration:none;font-weight:bold}
+.info{margin-top:12px;color:#718096;font-size:13px}
+@media(max-width:700px){.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="box">
+<h1>📅 Book Appointment</h1>
+<p class="subtitle">Schedule an appointment for a registered patient</p>
+
+{% if message %}
+<div class="message">✅ {{ message }}</div>
+{% endif %}
+
+{% if error %}
+<div class="error">❌ {{ error }}</div>
+{% endif %}
+
+<form method="POST" action="/appointment">
+
+<div class="form-grid">
+
+<div>
+<label>Patient</label>
+<select name="patient_id" required>
+<option value="">Select Patient</option>
+{% for patient in patients %}
+<option value="{{ patient.patient_id }}">
+#{{ patient.patient_id }} - {{ patient.first_name }} {{ patient.last_name }}
+</option>
+{% endfor %}
+</select>
+<div class="info">Only patients already registered in the database are shown.</div>
+</div>
+
+<div>
+<label>Doctor</label>
+<select name="doctor_id" required>
+<option value="">Select Doctor</option>
+{% for doctor in doctors %}
+<option value="{{ doctor.doctor_id }}">
+Dr. {{ doctor.first_name }} {{ doctor.last_name }} - {{ doctor.specialization }}
+</option>
+{% endfor %}
+</select>
+</div>
+
+<div>
+<label>Appointment Date</label>
+<input type="date" name="appointment_date" required>
+</div>
+
+<div>
+<label>Appointment Time</label>
+<input type="time" name="appointment_time" required>
+</div>
+
+<div style="grid-column:1/-1">
+<label>Reason for Visit</label>
+<input type="text" name="reason" placeholder="Example: Fever, consultation, follow-up..." required>
+</div>
+
+</div>
+
+<button type="submit">📅 Book Appointment</button>
+
+</form>
+</div>
+
+<div class="box">
+<h2>📋 Appointment History</h2>
+
+<div class="table-wrap">
+<table>
+<tr>
+<th>Appointment ID</th>
+<th>Patient</th>
+<th>Doctor</th>
+<th>Specialization</th>
+<th>Date</th>
+<th>Time</th>
+<th>Status</th>
+<th>Reason</th>
+</tr>
+
+{% if appointments %}
+{% for a in appointments %}
+<tr>
+<td>{{ a.appointment_id }}</td>
+<td>#{{ a.patient_id }} - {{ a.patient_name }}</td>
+<td>Dr. {{ a.doctor_name }}</td>
+<td>{{ a.specialization }}</td>
+<td>{{ a.appointment_date }}</td>
+<td>{{ a.appointment_time }}</td>
+<td><span class="status">{{ a.status }}</span></td>
+<td>{{ a.reason }}</td>
+</tr>
+{% endfor %}
+{% else %}
+<tr>
+<td colspan="8" style="text-align:center;color:#718096;padding:25px">
+No appointments found.
+</td>
+</tr>
+{% endif %}
+
+</table>
+</div>
+</div>
+
+<a class="back" href="/">← Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Billing - Hospital Management System</title>
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f3f7fb;color:#263238;padding:30px}
+.container{max-width:1150px;margin:auto}
+.box{background:white;padding:25px;border-radius:12px;box-shadow:0 3px 15px #dce3e8;margin-bottom:25px}
+h1,h2{color:#123b5d}
+.subtitle{color:#718096;margin:7px 0 25px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+label{display:block;font-weight:bold;margin-bottom:7px;color:#37474f}
+input,select{width:100%;padding:12px;border:1px solid #ccd6dd;border-radius:7px;font-size:14px}
+input:focus,select:focus{outline:none;border-color:#1769aa}
+button{margin-top:20px;background:#1769aa;color:white;border:0;padding:13px 22px;border-radius:7px;cursor:pointer;font-size:15px}
+button:hover{background:#0d527f}
+.message{padding:13px;background:#e8f7ef;color:#16734a;border-radius:7px;margin-bottom:20px}
+.error{padding:13px;background:#fdecec;color:#b42318;border-radius:7px;margin-bottom:20px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{background:#edf5fa;color:#123b5d;padding:13px;text-align:left;white-space:nowrap}
+td{padding:12px;border-bottom:1px solid #ddd;white-space:nowrap}
+.paid{color:green;font-weight:bold}
+.pending{color:#d97706;font-weight:bold}
+.back{display:inline-block;margin-top:5px;color:#1769aa;text-decoration:none;font-weight:bold}
+.info{margin-top:8px;color:#718096;font-size:13px}
+@media(max-width:700px){.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="box">
+<h1>💳 Hospital Billing</h1>
+<p class="subtitle">Create and manage patient bills</p>
+
+{% if message %}
+<div class="message">✅ {{ message }}</div>
+{% endif %}
+
+{% if error %}
+<div class="error">❌ {{ error }}</div>
+{% endif %}
+
+<form method="POST" action="/billing">
+
+<div class="form-grid">
+
+<div>
+<label>Patient</label>
+<select name="patient_id" id="patientSelect" required>
+<option value="">Select Patient</option>
+{% for patient in patients %}
+<option value="{{ patient.patient_id }}">
+#{{ patient.patient_id }} - {{ patient.first_name }} {{ patient.last_name }}
+</option>
+{% endfor %}
+</select>
+<div class="info">Select the patient for whom the bill is being created.</div>
+</div>
+
+<div>
+<label>Appointment</label>
+<select name="appointment_id" id="appointmentSelect" required>
+<option value="">Select Appointment</option>
+{% for a in billing_appointments %}
+<option value="{{ a.appointment_id }}" data-patient="{{ a.patient_id }}">
+#{{ a.appointment_id }} - {{ a.patient_name }} - {{ a.appointment_date }}
+</option>
+{% endfor %}
+</select>
+<div class="info">Only appointments belonging to the selected patient will be shown.</div>
+</div>
+
+<div>
+<label>Amount (₹)</label>
+<input type="number" name="amount" step="0.01" min="0.01" placeholder="Enter billing amount" required>
+</div>
+
+<div>
+<label>Bill Date</label>
+<input type="date" name="bill_date" id="billDate" required>
+</div>
+
+<div>
+<label>Payment Status</label>
+<select name="payment_status" required>
+<option value="Pending">Pending</option>
+<option value="Paid">Paid</option>
+</select>
+</div>
+
+<div>
+<label>Payment Method</label>
+<select name="payment_method" required>
+<option value="Cash">Cash</option>
+<option value="UPI">UPI</option>
+<option value="Card">Card</option>
+<option value="Online">Online</option>
+</select>
+</div>
+
+</div>
+
+<button type="submit">💳 Create Bill</button>
+
+</form>
+</div>
+
+<div class="box">
+<h2>📋 Billing History</h2>
+
+<div class="table-wrap">
+<table>
+<tr>
+<th>Bill ID</th>
+<th>Patient</th>
+<th>Appointment ID</th>
+<th>Amount</th>
+<th>Status</th>
+<th>Date</th>
+<th>Payment Method</th>
+</tr>
+
+{% if bills %}
+{% for bill in bills %}
+<tr>
+<td>{{ bill.bill_id }}</td>
+<td>#{{ bill.patient_id }} - {{ bill.patient_name }}</td>
+<td>{{ bill.appointment_id }}</td>
+<td>₹{{ bill.amount }}</td>
+<td>
+{% if bill.payment_status == "Paid" %}
+<span class="paid">Paid</span>
+{% else %}
+<span class="pending">Pending</span>
+{% endif %}
+</td>
+<td>{{ bill.bill_date }}</td>
+<td>{{ bill.payment_method }}</td>
+</tr>
+{% endfor %}
+{% else %}
+<tr>
+<td colspan="7" style="text-align:center;color:#718096;padding:25px">
+No billing records found.
+</td>
+</tr>
+{% endif %}
+
+</table>
+</div>
+</div>
+
+<a class="back" href="/">← Back to Dashboard</a>
+
+</div>
+
+<script>
+const patientSelect=document.getElementById("patientSelect");
+const appointmentSelect=document.getElementById("appointmentSelect");
+
+patientSelect.addEventListener("change",function(){
+const patientId=this.value;
+appointmentSelect.value="";
+
+const options=appointmentSelect.querySelectorAll("option[data-patient]");
+
+options.forEach(function(option){
+if(option.dataset.patient===patientId){
+option.style.display="";
+}else{
+option.style.display="none";
+}
+});
+});
+
+document.getElementById("billDate").value=new Date().toISOString().split("T")[0];
+</script>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Departments</title>
+<style>
+body{font-family:Arial;background:#f3f7fb;margin:0;padding:30px;color:#263238}
+.box{max-width:900px;margin:auto;background:white;padding:30px;border-radius:12px;box-shadow:0 3px 15px #ddd}
+h1{color:#123b5d;margin-bottom:8px}
+p{color:#718096;margin-bottom:25px}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.card{padding:20px;background:#edf5fa;border-radius:10px;border-left:5px solid #1769aa}
+.card h2{color:#123b5d;margin-bottom:8px}
+.card p{margin:0;color:#607d8b}
+.back{display:inline-block;margin-top:25px;color:#1769aa;text-decoration:none;font-weight:bold}
+@media(max-width:700px){.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="box">
+<h1>🏢 Departments</h1>
+<p>Hospital departments and locations</p>
+<div class="cards">
+{% for department in departments %}
+<div class="card">
+<h2>{{ department.department_name }}</h2>
+<p>📍 {{ department.location }}</p>
+<p>ID: {{ department.department_id }}</p>
+</div>
+{% endfor %}
+</div>
+<a class="back" href="/">← Back to Dashboard</a>
+</div>
+</body>
+</html>

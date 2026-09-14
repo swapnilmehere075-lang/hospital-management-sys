@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Patient Profile</title>
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f3f7fb;color:#263238;padding:30px}
+.container{max-width:1100px;margin:auto}
+.header{background:#123b5d;color:white;padding:25px;border-radius:14px 14px 0 0}
+.header h1{margin:0 0 6px}
+.header p{margin:0;opacity:.85}
+.box{background:white;padding:25px;margin-bottom:20px;box-shadow:0 3px 15px #dce3e8;border-radius:10px}
+.info{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}
+.item{padding:15px;background:#f7fafc;border-radius:8px}
+.label{font-size:13px;color:#718096;margin-bottom:5px}
+.value{font-size:16px;font-weight:bold;color:#123b5d}
+h2{color:#123b5d;margin-bottom:18px}
+.summary{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}
+.summary div{padding:18px;background:#edf5fa;border-radius:8px}
+.summary strong{display:block;font-size:23px;color:#1769aa;margin-top:5px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{background:#edf5fa;color:#123b5d;padding:12px;text-align:left}
+td{padding:12px;border-bottom:1px solid #ddd}
+.paid{color:green;font-weight:bold}
+.pending{color:#d97706;font-weight:bold}
+.back{display:inline-block;margin-top:5px;color:#1769aa;text-decoration:none;font-weight:bold}
+.empty{color:#718096;padding:15px 0}
+@media(max-width:700px){.info,.summary{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="header">
+<h1>👤 Patient Profile</h1>
+<p>Patient ID: {{ patient.patient_id }}</p>
+</div>
+
+<div class="box">
+<h2>📋 Personal Information</h2>
+<div class="info">
+
+<div class="item">
+<div class="label">Full Name</div>
+<div class="value">{{ patient.first_name }} {{ patient.last_name }}</div>
+</div>
+
+<div class="item">
+<div class="label">Gender</div>
+<div class="value">{{ patient.gender }}</div>
+</div>
+
+<div class="item">
+<div class="label">Date of Birth</div>
+<div class="value">{{ patient.date_of_birth }}</div>
+</div>
+
+<div class="item">
+<div class="label">Phone</div>
+<div class="value">{{ patient.phone }}</div>
+</div>
+
+<div class="item">
+<div class="label">Blood Group</div>
+<div class="value">{{ patient.blood_group }}</div>
+</div>
+
+<div class="item">
+<div class="label">Address</div>
+<div class="value">{{ patient.address }}</div>
+</div>
+
+</div>
+</div>
+
+<div class="box">
+<h2>📊 Billing Summary</h2>
+<div class="summary">
+<div>
+Total Bill
+<strong>₹{{ total_bill }}</strong>
+</div>
+<div>
+Pending Amount
+<strong>₹{{ pending_amount }}</strong>
+</div>
+</div>
+</div>
+
+<div class="box">
+<h2>📅 Appointment History</h2>
+
+{% if appointments %}
+<div class="table-wrap">
+<table>
+<tr>
+<th>ID</th>
+<th>Doctor</th>
+<th>Specialization</th>
+<th>Date</th>
+<th>Time</th>
+<th>Status</th>
+<th>Reason</th>
+</tr>
+
+{% for a in appointments %}
+<tr>
+<td>{{ a.appointment_id }}</td>
+<td>Dr. {{ a.doctor_name }}</td>
+<td>{{ a.specialization }}</td>
+<td>{{ a.appointment_date }}</td>
+<td>{{ a.appointment_time }}</td>
+<td>{{ a.status }}</td>
+<td>{{ a.reason }}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+{% else %}
+<div class="empty">No appointments found.</div>
+{% endif %}
+
+</div>
+
+<div class="box">
+<h2>💳 Billing History</h2>
+
+{% if bills %}
+<div class="table-wrap">
+<table>
+<tr>
+<th>Bill ID</th>
+<th>Appointment ID</th>
+<th>Amount</th>
+<th>Status</th>
+<th>Date</th>
+<th>Payment Method</th>
+</tr>
+
+{% for bill in bills %}
+<tr>
+<td>{{ bill.bill_id }}</td>
+<td>{{ bill.appointment_id }}</td>
+<td>₹{{ bill.amount }}</td>
+<td>
+{% if bill.payment_status == "Paid" %}
+<span class="paid">Paid</span>
+{% else %}
+<span class="pending">Pending</span>
+{% endif %}
+</td>
+<td>{{ bill.bill_date }}</td>
+<td>{{ bill.payment_method }}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+{% else %}
+<div class="empty">No billing records found.</div>
+{% endif %}
+
+</div>
+
+<a class="back" href="/search">← Back to Patient Search</a>
+<br>
+<a class="back" href="/">← Back to Dashboard</a>
+
+</div>
+</body>
+</html>
