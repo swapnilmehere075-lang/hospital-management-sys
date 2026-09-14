@@ -3,12 +3,15 @@ import mysql.connector
 
 app = Flask(__name__, template_folder="templates")
 
+import os
+
 def get_db_connection():
     return mysql.connector.connect(
-        host="127.0.0.1",
-        user="root",
-        password="Sw@pnil6576",
-        database="hospital_management"
+        host=os.environ["MYSQLHOST"],
+        port=int(os.environ["MYSQLPORT"]),
+        user=os.environ["MYSQLUSER"],
+        password=os.environ["MYSQLPASSWORD"],
+        database=os.environ["MYSQLDATABASE"]
     )
 
 @app.route("/")
