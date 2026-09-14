@@ -19,16 +19,16 @@ def home():
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
 
-    cursor.execute("SELECT COUNT(*) AS total FROM Patient")
+    cursor.execute("SELECT COUNT(*) AS total FROM patient")
     total_patients = cursor.fetchone()["total"]
 
-    cursor.execute("SELECT COUNT(*) AS total FROM Appointment")
+    cursor.execute("SELECT COUNT(*) AS total FROM appointment")
     total_appointments = cursor.fetchone()["total"]
 
-    cursor.execute("SELECT COUNT(*) AS total FROM Billing")
+    cursor.execute("SELECT COUNT(*) AS total FROM billing")
     total_bills = cursor.fetchone()["total"]
 
-    cursor.execute("SELECT COUNT(*) AS total FROM Department")
+    cursor.execute("SELECT COUNT(*) AS total FROM department")
     total_departments = cursor.fetchone()["total"]
 
     cursor.close()
@@ -174,7 +174,7 @@ def view_patient(patient_id):
             b.payment_status,
             b.bill_date,
             b.payment_method
-        FROM Billing b
+        FROM billing b
         WHERE b.patient_id = %s
         ORDER BY b.bill_id DESC
         """,
