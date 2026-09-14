@@ -154,8 +154,8 @@ def view_patient(patient_id):
             a.reason,
             CONCAT(d.first_name,' ',d.last_name) AS doctor_name,
             d.specialization
-        FROM Appointment a
-        JOIN Doctor d
+        FROM appointment a
+        JOIN doctor d
         ON a.doctor_id = d.doctor_id
         WHERE a.patient_id = %s
         ORDER BY a.appointment_id DESC
@@ -186,7 +186,7 @@ def view_patient(patient_id):
     cursor.execute(
         """
         SELECT COALESCE(SUM(amount),0) AS total_bill
-        FROM Billing
+        FROM billing
         WHERE patient_id = %s
         """,
         (patient_id,)
@@ -197,7 +197,7 @@ def view_patient(patient_id):
     cursor.execute(
         """
         SELECT COALESCE(SUM(amount),0) AS pending_amount
-        FROM Billing
+        FROM billing
         WHERE patient_id = %s
         AND payment_status = 'Pending'
         """,
@@ -241,7 +241,7 @@ def appointment():
         patient_exists = cursor.fetchone()
 
         cursor.execute(
-            "SELECT doctor_id FROM Doctor WHERE doctor_id = %s",
+            "SELECT doctor_id FROM doctor WHERE doctor_id = %s",
             (doctor_id,)
         )
 
@@ -255,7 +255,7 @@ def appointment():
             cursor.execute(
                 """
                 SELECT appointment_id
-                FROM Appointment
+                FROM appointment
                 WHERE doctor_id = %s
                 AND appointment_date = %s
                 AND appointment_time = %s
@@ -274,7 +274,7 @@ def appointment():
             else:
                 cursor.execute(
                     """
-                    INSERT INTO Appointment
+                    INSERT INTO appointment
                     (patient_id,doctor_id,appointment_date,appointment_time,status,reason)
                     VALUES (%s,%s,%s,%s,'Scheduled',%s)
                     """,
@@ -288,7 +288,7 @@ def appointment():
                 )
 
                 db.commit()
-                message = "Appointment booked successfully."
+                message = "appointment booked successfully."
 
     cursor.execute(
         """
@@ -310,7 +310,7 @@ def appointment():
             first_name,
             last_name,
             specialization
-        FROM Doctor
+        FROM doctor
         ORDER BY first_name
         """
     )
@@ -329,10 +329,10 @@ def appointment():
             a.appointment_time,
             a.status,
             a.reason
-        FROM Appointment a
+        FROM appointment a
         JOIN patient p
         ON a.patient_id = p.patient_id
-        JOIN Doctor d
+        JOIN doctor d
         ON a.doctor_id = d.doctor_id
         ORDER BY a.appointment_id DESC
         """
@@ -378,7 +378,7 @@ def billing():
         cursor.execute(
             """
             SELECT appointment_id
-            FROM Appointment
+            FROM appointment
             WHERE appointment_id = %s
             AND patient_id = %s
             """,
@@ -395,11 +395,11 @@ def billing():
         elif not appointment_exists:
             error = "Selected appointment does not belong to this patient."
         elif not amount or float(amount) <= 0:
-            error = "Billing amount must be greater than zero."
+            error = "billing amount must be greater than zero."
         else:
             cursor.execute(
                 """
-                INSERT INTO Billing
+                INSERT INTO billing
                 (patient_id,appointment_id,amount,payment_status,bill_date,payment_method)
                 VALUES (%s,%s,%s,%s,%s,%s)
                 """,
@@ -437,7 +437,7 @@ def billing():
             CONCAT(p.first_name,' ',p.last_name) AS patient_name,
             a.appointment_date,
             a.appointment_time
-        FROM Appointment a
+        FROM appointment a
         JOIN patient p
         ON a.patient_id = p.patient_id
         ORDER BY a.appointment_id DESC
@@ -457,7 +457,7 @@ def billing():
             b.payment_status,
             b.bill_date,
             b.payment_method
-        FROM Billing b
+        FROM billing b
         JOIN patient p
         ON b.patient_id = p.patient_id
         ORDER BY b.bill_id DESC
@@ -492,8 +492,8 @@ def doctors():
             d.phone,
             dep.department_name,
             dep.location
-        FROM Doctor d
-        LEFT JOIN Department dep
+        FROM doctor d
+        LEFT JOIN department dep
         ON d.department_id = dep.department_id
         ORDER BY d.doctor_id
         """
@@ -520,7 +520,7 @@ def departments():
             department_id,
             department_name,
             location
-        FROM Department
+        FROM department
         ORDER BY department_id
         """
     )
